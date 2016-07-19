@@ -8,6 +8,11 @@ gem 'therubyracer', platforms: :ruby
 gem 'jquery-rails'
 
 gem 'figaro'
+gem 'bootstrap-sass', '~> 3.2.0'
+gem 'autoprefixer-rails', '5.2.1'
+gem 'slim'
+gem 'simple_form'
+gem 'carrierwave'
 
 group :development, :test do
     gem 'spring'
