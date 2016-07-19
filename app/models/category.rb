@@ -1,3 +1,6 @@
 class Category < ActiveRecord::Base
-  validates_presence_of :name
+    has_many :links
+    has_many :operations, through: :links
+
+    validates :name, presence: true
 end

@@ -1,7 +1,10 @@
 class Operation < ActiveRecord::Base
-  belongs_to :company
+    has_many :links
+    has_many :categories, through: :links
 
-  validates_presence_of :invoice_num, :invoice_date, :amount, :operation_date, :kind, :status
-  validates_numericality_of :amount, greater_than: 0
-  validates_uniqueness_of :invoice_num
+    belongs_to :company
+
+    validates :invoice_num, :invoice_date, :amount, :operation_date, :kind, :status, presence: true
+    validates :amount, numericality: { greater_than: 0 }
+    validates :invoice_num, uniqueness: true
 end
