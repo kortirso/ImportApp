@@ -1,0 +1,19 @@
+default: &default
+  adapter: postgresql
+  encoding: utf8
+  pool: 20
+  port: 5432
+  username: <%= ENV['IMPORT_DATABASE_USERNAME'] %>
+  password: <%= ENV['IMPORT_DATABASE_PASSWORD'] %>
+
+development:
+  <<: *default
+  database: ImportApp_development
+
+test:
+  <<: *default
+  database: ImportApp_test
+
+production:
+  <<: *default
+  database: ImportApp_production
