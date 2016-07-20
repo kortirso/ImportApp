@@ -1,0 +1,39 @@
+.row id="task_#{@task.id}"
+    #task data={task: "#{@task.id}"}
+        h3= "Data for task ID - #{@task.id}"
+        - @companies.each do |company|
+            - operations = company.operations.of_task(@task.id)
+            .col-xs-12
+                .company_block id="company_#{company.id}"
+                    .panel.panel-default
+                        .panel-heading
+                            h4= company.name
+                            - if operations.size > 0
+                                .stats
+                                    p
+                                        = "Operations count - "
+                                        span#size= "#{operations.size}"
+                                    p
+                                        = "Accepted operations - "
+                                        span#status= "#{operations.accepted.size}"
+                                    p
+                                        = "Highest operation with invoice num "
+                                        span#highest_num="#{operations.highest}"
+                        .panel-body
+                            table.table.table-striped
+                                thead
+                                    tr
+                                        th Invoice num
+                                        th Amount
+                                        th Invoice date
+                                        th Operation date
+                                        th Status
+                                tbody
+                                    - operations.each do |operation|
+                                        tr class="#{'highest' if operation.highest}"
+                                            td= operation.invoice_num
+                                            td= operation.amount
+                                            td= operation.invoice_date
+                                            td= operation.operation_date
+                                            td= operation.status
+= subscribe_to "/tasks/#{@task.id}"

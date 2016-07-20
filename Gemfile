@@ -14,6 +14,9 @@ gem 'slim'
 gem 'simple_form'
 gem 'carrierwave'
 gem 'sidekiq'
+gem 'private_pub'
+gem 'thin'
+gem 'active_model_serializers'
 
 group :development, :test do
     gem 'spring'

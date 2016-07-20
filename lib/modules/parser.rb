@@ -5,7 +5,6 @@ module Parser
         def initialize(file, task_id)
             @file = file
             @task_id = task_id
-            @success = 0
             @failure = 0
             @companies = get_companies
             @categories = get_categories
@@ -22,9 +21,8 @@ module Parser
         def parsing(row)
             company_id = find_company_index(row[0].strip)
             return @failure += 1 if company_id.nil?
-            operation = Operation.create(task_id: @task_id, company_id: company_id, invoice_num: row[1], invoice_date: transform_date(row[2]), operation_date: transform_date(row[3]), amount: row[4].to_f, status: row[7], kind: row[8])
+            operation = Operation.create(task_id: @task_id, company_id: company_id, invoice_num: row[1], invoice_date: transform_date(row[2]), operation_date: transform_date(row[3]), amount: row[4].to_f, status: row[7], kind: row[8], highest: (highest?(row[4].to_f, company_id) ? true : false))
             check_categories(operation.id, row[8])
-            @success += 1
         rescue
             @failure += 1
         end
@@ -38,7 +36,7 @@ module Parser
         end
 
         def get_companies
-            Company.all.map { |c| [c.name, c.id] }
+            Company.all.map { |c| [c.name, c.id, 0] }
         end
 
         def get_categories
@@ -70,6 +68,17 @@ module Parser
                 return category.id
             else
                 return category.flatten[1].to_i
+            end
+        end
+
+        def highest?(operation_amount, company_id)
+            if operation_amount > @companies[company_id - 1][2]
+                old = Operation.find_by(task_id: @task_id, company_id: company_id, highest: true)
+                old.update(highest: false) unless old.nil?
+                @companies[company_id - 1][2] = operation_amount
+                return true
+            else
+                return false
             end
         end
     end

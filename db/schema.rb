@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160720062234) do
+ActiveRecord::Schema.define(version: 20160720111326) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -38,18 +38,19 @@ ActiveRecord::Schema.define(version: 20160720062234) do
   add_index "links", ["operation_id", "category_id"], name: "index_links_on_operation_id_and_category_id", using: :btree
 
   create_table "operations", force: :cascade do |t|
-    t.string   "invoice_num",                             null: false
-    t.date     "invoice_date",                            null: false
-    t.date     "operation_date",                          null: false
-    t.decimal  "amount",         precision: 10, scale: 2, null: false
+    t.string   "invoice_num",                                             null: false
+    t.date     "invoice_date",                                            null: false
+    t.date     "operation_date",                                          null: false
+    t.decimal  "amount",         precision: 10, scale: 2,                 null: false
     t.string   "reporter"
     t.text     "notes"
-    t.string   "status",                                  null: false
-    t.string   "kind",                                    null: false
-    t.datetime "created_at",                              null: false
-    t.datetime "updated_at",                              null: false
+    t.string   "status",                                                  null: false
+    t.string   "kind",                                                    null: false
+    t.datetime "created_at",                                              null: false
+    t.datetime "updated_at",                                              null: false
     t.integer  "company_id"
     t.integer  "task_id"
+    t.boolean  "highest",                                 default: false
   end
 
   add_index "operations", ["company_id"], name: "index_operations_on_company_id", using: :btree
