@@ -13,6 +13,7 @@ gem 'autoprefixer-rails', '5.2.1'
 gem 'slim'
 gem 'simple_form'
 gem 'carrierwave'
+gem 'sidekiq'
 
 group :development, :test do
     gem 'spring'
