@@ -5,6 +5,7 @@ module Parser
         def initialize(file, task_id)
             @file = file
             @task_id = task_id
+            @success = 0
             @failure = 0
             @companies = get_companies
             @categories = get_categories
@@ -13,16 +14,24 @@ module Parser
         attr_reader :success, :failure
 
         def parse_file
-            CSV.read("#{Rails.root}/public#{@file}", encoding: 'utf-8', col_sep: ',')[1..-1].each { |row| parsing(row) }
+            CSV.read("#{Rails.root}/public#{@file}", encoding: 'utf-8', col_sep: ',')[1..-1].each_with_index do |row, index|
+                parsing(row)
+                send_message if index % 50 == 0
+            end
         end
 
         private
+
+        def send_message
+            PrivatePub.publish_to "/tasks", operations: { task_id: @task_id, success: @success, failure: @failure }.to_json
+        end
 
         def parsing(row)
             company_id = find_company_index(row[0].strip)
             return @failure += 1 if company_id.nil?
             operation = Operation.create(task_id: @task_id, company_id: company_id, invoice_num: row[1], invoice_date: transform_date(row[2]), operation_date: transform_date(row[3]), amount: row[4].to_f, status: row[7], kind: row[8], highest: (highest?(row[4].to_f, company_id) ? true : false))
             check_categories(operation.id, row[8])
+            @success += 1
         rescue
             @failure += 1
         end

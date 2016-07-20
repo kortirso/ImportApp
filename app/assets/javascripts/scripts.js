@@ -6,16 +6,24 @@ $(function() {
         if(operation.highest == true) {
             $('#company_' + operation.company_id + ' table tbody tr.highest').removeClass('highest');
             $('#company_' + operation.company_id + ' table tbody').append('<tr class="highest"><td>' + operation.invoice_num + '</td><td>' + operation.amount + '</td><td>' + operation.invoice_date + '</td><td>' + operation.operation_date + '</td><td>' + operation.status + '</td></tr>');
-            $('#company_' + operation.company_id + ' #highest_num').html(operation.invoice_num);
+            $('#company_' + operation.company_id + ' .highest_num').html(operation.invoice_num);
         }
         else {
             $('#company_' + operation.company_id + ' table tbody').append('<tr><td>' + operation.invoice_num + '</td><td>' + operation.amount + '</td><td>' + operation.invoice_date + '</td><td>' + operation.operation_date + '</td><td>' + operation.status + '</td></tr>');
         }
-        opSize = $('#company_' + operation.company_id + ' #size').html();
-        $('#company_' + operation.company_id + ' #size').html(parseInt(opSize) + 1);
+        opSize = $('#company_' + operation.company_id + ' .size').html();
+        $('#company_' + operation.company_id + ' .size').html(parseInt(opSize) + 1);
         if(operation.status == 'accepted') {
-            opStatus = $('#company_' + operation.company_id + ' #status').html();
-            $('#company_' + operation.company_id + ' #status').html(parseInt(opStatus) + 1);
+            opStatus = $('#company_' + operation.company_id + ' .status').html();
+            $('#company_' + operation.company_id + ' .status').html(parseInt(opStatus) + 1);
         }
+    });
+
+    PrivatePub.subscribe("/tasks", function(data, channel) {
+        operations = $.parseJSON(data.operations);
+        ID = parseInt(operations.task_id);
+        $('#task_' + ID + ' .success').html(parseInt(operations.success));
+        $('#task_' + ID + ' .failed').html(parseInt(operations.failure));
+        $('#task_' + ID + ' .loaded').html(parseInt(operations.success) + parseInt(operations.failure));
     });
 });

@@ -9,13 +9,20 @@
                         = f.button :submit, class: 'btn btn-sm btn-primary', value: 'Load file'
 .row
     .col-xs-12
-        h3 List of old tasks
+        h3 List of tasks
         - @tasks.each do |task|
             .col-xs-3
                 .task-block id="task_#{task.id}"
                     p= "ID - #{task.id}"
                     p= "File - #{task.file.url.split('/').last}"
-                    p= "Operations - #{task.operations.size}"
-                    p= "Failure - #{task.failure}"
+                    p
+                        = "Loaded - "
+                        span.loaded= task.success + task.failure
+                    p
+                        = "Successed loades - "
+                        span.success= task.success
+                    p
+                        = "Failed loades - "
+                        span.failed= task.failure
                     p= link_to 'View results', task_path(task), class: 'btn btn-sm btn-primary'
-                        
+= subscribe_to "/tasks"

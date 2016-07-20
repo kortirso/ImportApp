@@ -12,13 +12,13 @@
                                 .stats
                                     p
                                         = "Operations count - "
-                                        span#size= "#{operations.size}"
+                                        span.size= operations.size
                                     p
                                         = "Accepted operations - "
-                                        span#status= "#{operations.accepted.size}"
+                                        span.status= operations.accepted.size
                                     p
                                         = "Highest operation with invoice num "
-                                        span#highest_num="#{operations.highest}"
+                                        span.highest_num= operations.highest
                         .panel-body
                             table.table.table-striped
                                 thead
