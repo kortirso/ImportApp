@@ -11,9 +11,13 @@ class Operation < ActiveRecord::Base
 
     scope :of_task, -> (task_id) { where(task_id: task_id) }
     scope :accepted, -> { where(status: 'accepted') }
-    scope :highest, -> { find_by(highest: true).invoice_num }
 
     after_create :send_message
+
+    def self.highest
+        high = find_by(highest: true)
+        high.nil? ? nil : high.invoice_num
+    end
 
     private
     def send_message
