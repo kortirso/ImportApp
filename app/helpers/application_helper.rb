@@ -5,9 +5,7 @@ module ApplicationHelper
                 operations = operations.where("#{filter[:type]} = ?", filter[:text])
             elsif filter[:type] == 'kind'
                 category = Category.find_by(name: filter[:text])
-                if category
-                    operations = category.operations.where(company_id: company_id, task_id: task_id)
-                end
+                operations = category.operations.where(company_id: company_id, task_id: task_id) if category
             end
         end
         operations

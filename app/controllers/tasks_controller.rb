@@ -7,6 +7,7 @@ class TasksController < ApplicationController
 
     def show
         @companies = Company.all.order(id: :asc)
+        @operations = @task.operations
     end
 
     def create

@@ -10,6 +10,7 @@ class Operation < ActiveRecord::Base
     validates :invoice_num, uniqueness: true
 
     scope :of_task, -> (task_id) { where(task_id: task_id) }
+    scope :of_company, -> (company_id) { where(company_id: company_id) }
     scope :accepted, -> { where(status: 'accepted') }
 
     after_create :send_message
