@@ -30,6 +30,9 @@
                                         p
                                             = "Highest operation with invoice num "
                                             span.highest_num= operations.highest
+                                .export_block
+                                    = simple_form_for('params', url: export_path(params: { task_id: @task.id, company_id: company.id, filter: params[:filter] }, format: :csv)) do |f|
+                                        = f.button :submit, class: 'btn btn-sm btn-primary', value: 'Export CSV'
                         .panel-body
                             table.table.table-striped
                                 thead

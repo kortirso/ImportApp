@@ -18,6 +18,7 @@ module Parser
                 parsing(row)
                 send_message if index % 50 == 0
             end
+            send_message
         end
 
         private
@@ -29,7 +30,7 @@ module Parser
         def parsing(row)
             company_id = find_company_index(row[0].strip)
             return @failure += 1 if company_id.nil?
-            operation = Operation.create(task_id: @task_id, company_id: company_id, invoice_num: row[1], invoice_date: transform_date(row[2]), operation_date: transform_date(row[3]), amount: row[4].to_f, reporter: row[5], status: row[7], kind: row[8], highest: (highest?(row[4].to_f, company_id) ? true : false))
+            operation = Operation.create(task_id: @task_id, company_id: company_id, invoice_num: row[1], invoice_date: transform_date(row[2]), operation_date: transform_date(row[3]), amount: row[4].to_f, reporter: row[5], status: row[7], kind: row[8].downcase, highest: (highest?(row[4].to_f, company_id) ? true : false))
             check_categories(operation.id, row[8])
             @success += 1
         rescue
