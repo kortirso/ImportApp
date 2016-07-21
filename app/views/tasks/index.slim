@@ -14,7 +14,7 @@
             .col-xs-3
                 .task-block id="task_#{task.id}"
                     p= "ID - #{task.id}"
-                    p= "File - #{task.file}"
+                    p= "File - #{task.file.url.split('/').last}"
                     p
                         = "Loaded - "
                         span.loaded= task.success + task.failure

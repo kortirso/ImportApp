@@ -1,7 +1,9 @@
-require 'csv'
+require 'smarter_csv'
 
 module Parser
     class TaskParser
+        @@chunk_size = 1000
+
         def initialize(file, task_id)
             @file = file
             @task_id = task_id
@@ -15,27 +17,28 @@ module Parser
         attr_reader :success, :total
 
         def parse_file
-            CSV.read("#{Rails.root}/public#{@file}", encoding: 'utf-8', col_sep: ',')[1..-1].each do |row|
-                parsing(row)
-                @total += 1
-                saving_operations if @total % 200 == 0
+            SmarterCSV.process("#{Rails.root}/public#{@file}", chunk_size: @@chunk_size, encoding: 'utf-8', col_sep: ',') do |chunk|
+                chunk.each { |row| parsing(row) }
+                @total += chunk.size
+                saving_operations
             end
             saving_operations
         end
 
         private
         def parsing(row)
+            row[:kind] = '' if row[:kind].nil?
             return false unless row_valid?(row)
-            company_id = find_company_index(row[0].strip)
+            company_id = find_company_index(row[:company].strip)
             return false if company_id.nil?
-            operation = Operation.new task_id: @task_id, company_id: company_id, invoice_num: row[1], invoice_date: transform_date(row[2]), operation_date: transform_date(row[3]), amount: row[4].to_f, reporter: row[5], status: row[7], kind: row[8].downcase
-            categories = row[8].downcase.split(';')
+            operation = Operation.new task_id: @task_id, company_id: company_id, invoice_num: row[:invoice_num], invoice_date: transform_date(row[:invoice_date]), operation_date: transform_date(row[:operation_date]), amount: row[:amount].to_f, reporter: row[:reporter], status: row[:status], kind: row[:kind].downcase
+            categories = row[:kind].downcase.split(';')
             categories.each { |cat| operation.links.build(category_id: find_category_index(cat)) }
             @operations << operation
         end
 
         def row_valid?(row)
-            (0..8).each { |index| return false if row[index].nil? }
+            return false if row.size != 9
             return true
         end
 
