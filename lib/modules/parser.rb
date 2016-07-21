@@ -22,7 +22,6 @@ module Parser
                 @total += chunk.size
                 saving_operations
             end
-            saving_operations
         end
 
         private

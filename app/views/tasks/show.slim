@@ -1,5 +1,5 @@
 .row id="task_#{@task.id}"
-    #task data={task: "#{@task.id}"}
+    #task
         .col-xs-6
             h3= "Data for task ID - #{@task.id}"
         .col-xs-6
@@ -54,4 +54,3 @@
                                             td= operation.reporter
                                             td= operation.kind.downcase
                                             td= operation.status
-= subscribe_to "/tasks/#{@task.id}"
