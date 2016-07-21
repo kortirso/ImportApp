@@ -13,7 +13,7 @@ class Operation < ActiveRecord::Base
     scope :of_company, -> (company_id) { where(company_id: company_id) }
     scope :accepted, -> { where(status: 'accepted') }
 
-    after_create :send_message
+    #after_create :send_message
 
     def self.highest
         high = find_by(highest: true)

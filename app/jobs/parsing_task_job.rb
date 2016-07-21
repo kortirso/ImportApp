@@ -5,6 +5,6 @@ class ParsingTaskJob < ActiveJob::Base
     def perform(task)
         task_parser = Parser::TaskParser.new(task.file, task.id)
         task_parser.parse_file
-        task.update(success: task_parser.success, failure: task_parser.failure)
+        task.update(success: task_parser.success, failure: task_parser.total - task_parser.success)
     end
 end

@@ -17,6 +17,7 @@ gem 'sidekiq'
 gem 'private_pub'
 gem 'thin'
 gem 'active_model_serializers'
+gem 'activerecord-import'
 
 group :development, :test do
     gem 'spring'

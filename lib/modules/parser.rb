@@ -5,44 +5,62 @@ module Parser
         def initialize(file, task_id)
             @file = file
             @task_id = task_id
+            @total = 0
             @success = 0
-            @failure = 0
             @companies = get_companies
             @categories = get_categories
+            @operations = []
         end
 
-        attr_reader :success, :failure
+        attr_reader :success, :total
 
         def parse_file
-            CSV.read("#{Rails.root}/public#{@file}", encoding: 'utf-8', col_sep: ',')[1..-1].each_with_index do |row, index|
+            CSV.read("#{Rails.root}/public#{@file}", encoding: 'utf-8', col_sep: ',')[1..-1].each do |row|
                 parsing(row)
-                send_message if index % 50 == 0
+                @total += 1
+                saving_operations if @total % 200 == 0
             end
-            send_message
+            saving_operations
         end
 
         private
-
-        def send_message
-            PrivatePub.publish_to "/tasks", operations: { task_id: @task_id, success: @success, failure: @failure }.to_json
+        def parsing(row)
+            return false unless row_valid?(row)
+            company_id = find_company_index(row[0].strip)
+            return false if company_id.nil?
+            operation = Operation.new task_id: @task_id, company_id: company_id, invoice_num: row[1], invoice_date: transform_date(row[2]), operation_date: transform_date(row[3]), amount: row[4].to_f, reporter: row[5], status: row[7], kind: row[8].downcase
+            categories = row[8].downcase.split(';')
+            categories.each { |cat| operation.links.build(category_id: find_category_index(cat)) }
+            @operations << operation
         end
 
-        def parsing(row)
-            company_id = find_company_index(row[0].strip)
-            return @failure += 1 if company_id.nil?
-            operation = Operation.create(task_id: @task_id, company_id: company_id, invoice_num: row[1], invoice_date: transform_date(row[2]), operation_date: transform_date(row[3]), amount: row[4].to_f, reporter: row[5], status: row[7], kind: row[8].downcase, highest: (highest?(row[4].to_f, company_id) ? true : false))
-            check_categories(operation.id, row[8])
-            @success += 1
-        rescue
-            @failure += 1
+        def row_valid?(row)
+            (0..8).each { |index| return false if row[index].nil? }
+            return true
+        end
+
+        def saving_operations
+            saved = Operation.import @operations, recursive: true
+            @operations = []
+            @success += saved.ids.count
+            send_message
+        end
+
+        def send_message
+            PrivatePub.publish_to "/tasks", operations: { task_id: @task_id, success: @success, failure: @total - @success }.to_json
         end
 
         def transform_date(date)
-            if date[2] == '/'
-                dates = date.split('/')
-                date = "#{dates[1]}-#{dates[0]}-#{dates[2]}"
+            if date
+                if date[2] == '/'
+                    dates = date.split('/')
+                    date = "#{dates[1]}-#{dates[0]}-#{dates[2]}"
+                end
+                date = '' if date == 'N/A'
+                return date.to_date
+            else
+                return ''.to_date
             end
-            return date.to_date
         end
 
         def get_companies
@@ -62,14 +80,6 @@ module Parser
             end
         end
 
-        def check_categories(operation_id, kinds)
-            categories = kinds.downcase.split(';')
-            categories.each do |cat|
-                category_id = find_category_index(cat)
-                Link.create category_id: category_id, operation_id: operation_id
-            end
-        end
-
         def find_category_index(category_name)
             category = @categories.select { |c| c[0] == category_name }
             if category.empty?
@@ -78,17 +88,6 @@ module Parser
                 return category.id
             else
                 return category.flatten[1].to_i
-            end
-        end
-
-        def highest?(operation_amount, company_id)
-            if operation_amount > @companies[company_id - 1][2]
-                old = Operation.find_by(task_id: @task_id, company_id: company_id, highest: true)
-                old.update(highest: false) unless old.nil?
-                @companies[company_id - 1][2] = operation_amount
-                return true
-            else
-                return false
             end
         end
     end
