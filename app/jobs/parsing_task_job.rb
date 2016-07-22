@@ -4,8 +4,7 @@ class ParsingTaskJob < ActiveJob::Base
 
     def perform(task)
         task_parser = Parser::TaskParser.new(task.file, task.id)
-        task_parser.parse_file
-        task.update(success: task_parser.success, failure: task_parser.total - task_parser.success)
+        task.update(success: task_parser.success, failure: task_parser.total - task_parser.success, parsed?: true)
         PrivatePub.publish_to "/tasks/complete", task: { id: task.id }.to_json
     end
 end

@@ -12,10 +12,12 @@ module Parser
             @companies = get_companies
             @categories = get_categories
             @operations = []
+            parse_file
         end
 
         attr_reader :success, :total
 
+        private
         def parse_file
             SmarterCSV.process("#{Rails.root}/public#{@file}", chunk_size: @@chunk_size, encoding: 'utf-8', col_sep: ',') do |chunk|
                 chunk.each { |row| parsing(row) }
@@ -24,7 +26,6 @@ module Parser
             end
         end
 
-        private
         def parsing(row)
             row[:kind] = '' if row[:kind].nil?
             return false unless row_valid?(row)

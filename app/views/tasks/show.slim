@@ -13,6 +13,7 @@
         - @companies.each do |company|
             - operations = @operations.of_company(company.id)
             - operations = operations_filter(operations, params[:filter], company.id, @task.id)
+            - highest_name = operations.highest if operations.size > 0
             .col-xs-12
                 .company_block id="company_#{company.id}"
                     .panel.panel-default
@@ -29,7 +30,7 @@
                                             span.status= operations.accepted.size
                                         p
                                             = "Highest operation with invoice num "
-                                            span.highest_num= operations.highest
+                                            span.highest_num= highest_name
                                 .export_block
                                     = simple_form_for('params', url: export_path(params: { task_id: @task.id, company_id: company.id, filter: params[:filter] }, format: :csv)) do |f|
                                         = f.button :submit, class: 'btn btn-sm btn-primary', value: 'Export CSV'
@@ -46,7 +47,7 @@
                                         th Status
                                 tbody
                                     - operations.each do |operation|
-                                        tr class="#{'highest' if operation.highest}"
+                                        tr class="#{'highest' if operation.invoice_num == highest_name}"
                                             td= operation.invoice_num
                                             td= operation.amount
                                             td= operation.invoice_date

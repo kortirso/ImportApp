@@ -16,8 +16,7 @@ class Operation < ActiveRecord::Base
     #after_create :send_message
 
     def self.highest
-        high = find_by(highest: true)
-        high.nil? ? nil : high.invoice_num
+        all.order(amount: :desc).first.invoice_num
     end
 
     private

@@ -18,4 +18,13 @@ RSpec.describe Operation, type: :model do
 
         expect(operation).to be_valid
     end
+
+    context '.highest' do
+        let!(:operation_1) { create :operation }
+        let!(:operation_2) { create :operation, amount: 20000.0 }
+
+        it 'returns invoice_num of operation_2' do
+            expect(Operation.highest).to eq operation_2.invoice_num
+        end
+    end
 end

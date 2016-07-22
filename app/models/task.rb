@@ -5,10 +5,10 @@ class Task < ActiveRecord::Base
 
     mount_uploader :file, FileUploader
 
-    after_commit :parsing_task, on: :create
+    after_save :parsing_task, on: :create
 
     private
     def parsing_task
-        ParsingTaskJob.perform_later(self)
+        ParsingTaskJob.perform_later(self) unless self.parsed?
     end
 end

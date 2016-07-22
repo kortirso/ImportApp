@@ -7,4 +7,13 @@ RSpec.describe Task, type: :model do
 
         expect(task).to be_valid
     end
+
+    context '.parsing_task' do
+        subject { build :task }
+
+        it 'should perform_later job ParsingTaskJob' do
+            expect(ParsingTaskJob).to receive(:perform_later).with(subject)
+            subject.save!
+        end
+    end
 end
