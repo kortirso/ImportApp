@@ -4,8 +4,9 @@ FactoryGirl.define do
         invoice_date Time.current
         amount 10000
         operation_date Time.current
-        kind 'Some kind'
-        status 'Some status'
+        reporter 'John Doe'
+        kind 'other'
+        status 'other'
         association :company
         association :task
     end

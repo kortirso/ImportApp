@@ -15,17 +15,17 @@ module Export
             get_operations
             CSV.generate(@options) do |csv|
                 csv << @column_names
-                @operations.each do |operation|
-                    csv << operation.attributes.values_at(*@column_names)
-                end
+                @operations.each { |operation| csv << operation.attributes.values_at(*@column_names) } if @operations
             end
         end
 
         private
         def get_operations
-            company = Company.find(@company_id)
-            @operations = company.operations.of_task(@task_id)
-            operations_filter
+            company = Company.find_by(id: @company_id)
+            if company
+                @operations = company.operations.of_task(@task_id)
+                operations_filter
+            end
         end
 
         def operations_filter

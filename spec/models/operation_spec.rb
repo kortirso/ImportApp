@@ -3,7 +3,7 @@ RSpec.describe Operation, type: :model do
     it { should validate_presence_of :invoice_date }
     it { should validate_presence_of :operation_date }
     it { should validate_presence_of :amount }
-    it { should validate_presence_of :kind }
+    #it { should validate_presence_of :kind }
     it { should validate_presence_of :status }
     it { should validate_presence_of :company_id }
     it { should validate_presence_of :task_id }
