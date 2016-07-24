@@ -1,3 +1,55 @@
+@import url('https://fonts.googleapis.com/css?family=Ubuntu&subset=latin,cyrillic');
+
+* {
+    font-family: 'Ubuntu', sans-serif !important;
+    font-size: 14px;
+}
+
+html {
+    overflow-y: scroll;
+    &::-webkit-scrollbar {
+        width: 10px;
+    }
+    &::-webkit-scrollbar-track {
+        -webkit-border-radius: 6px;
+        border-radius: 6px;
+    }
+    &::-webkit-scrollbar-thumb {
+        -webkit-border-radius: 6px;
+        border-radius: 6px;
+        background: rgba(217,217,217,0.8);
+        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+    }
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    color: #FFF;
+    .inside {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        z-index: -2;
+        background-image: image-url('background.jpg');
+        background-size: cover;
+        background-position: center;
+        .shadow {
+            position: fixed;
+            background: rgba(0, 0, 0, 0.75);
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+    }
+}
+
 body {
     .company_block {
         font-size: 12px;
@@ -12,4 +64,31 @@ body {
 
 #filter_block {
     margin-top: 15px;
+}
+
+#new_task_block {
+    padding: 10px;
+    background: #FFF;
+    margin-top: 10px;
+    h3 {
+        margin-top: 0;
+    }
+    .actions {
+        margin-top: 15px;
+    }
+}
+
+#tasks {
+    h3 {
+        color: #FFF;
+    }
+    .task-block {
+        padding: 10px;
+        background: #FFF;
+        margin: 10px 0;
+    }
+}
+
+#task h3 {
+    color: #FFF;
 }

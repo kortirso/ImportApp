@@ -1,18 +1,18 @@
 .row id="task_#{@task.id}"
     #task
-        .col-xs-6
+        .col-xs-12.col-sm-6
             h3= "Data for task ID - #{@task.id}"
-        .col-xs-6
+        .col-xs-12.col-sm-6
             #filter_block
                 = simple_form_for :filter, url: task_path(@task.id), method: :get do |f|
                     .col-xs-4= f.input :type, label: false, collection: %w(status kind invoice_num reporter), include_blank: false
                     .col-xs-4= f.input :text, label: false, placeholder: 'Enter filter text or find all operations'
                     .col-xs-4
                         .actions
-                            = f.button :submit, class: 'btn btn-sm btn-primary'
+                            = f.button :submit, class: 'btn btn-sm btn-primary', value: 'Apply filter'
         - @companies.each do |company|
             - operations = @operations.of_company(company.id)
-            - operations = operations_filter(operations, params[:filter], company.id, @task.id)
+            - operations = operations.operations_filter(params[:filter])
             - highest_name = operations.highest if operations.size > 0
             .col-xs-12
                 .company_block id="company_#{company.id}"
@@ -24,13 +24,13 @@
                                     p
                                         = "Operations count - "
                                         span.size= operations.size
-                                    - if params[:filter].nil? || params[:filter][:text].empty?
+                                    - if params[:filter].nil? || params[:filter][:text].nil? || params[:filter][:text].empty?
                                         p
                                             = "Accepted operations - "
                                             span.status= operations.accepted.size
-                                        p
-                                            = "Highest operation with invoice num "
-                                            span.highest_num= highest_name
+                                    p
+                                        = "Highest operation with invoice num "
+                                        span.highest_num= highest_name
                                 .export_block
                                     = simple_form_for('params', url: export_path(params: { task_id: @task.id, company_id: company.id, filter: params[:filter] }, format: :csv)) do |f|
                                         = f.button :submit, class: 'btn btn-sm btn-primary', value: 'Export CSV'

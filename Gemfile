@@ -16,7 +16,6 @@ gem 'carrierwave'
 gem 'sidekiq'
 gem 'private_pub'
 gem 'thin'
-gem 'active_model_serializers'
 gem 'activerecord-import'
 gem 'smarter_csv'
 

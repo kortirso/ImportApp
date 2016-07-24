@@ -24,18 +24,7 @@ module Export
             company = Company.find_by(id: @company_id)
             if company
                 @operations = company.operations.of_task(@task_id)
-                operations_filter
-            end
-        end
-
-        def operations_filter
-            if @filter && @filter[:type] && !@filter[:text].empty?
-                if %w(status invoice_num reporter).include?(@filter[:type])
-                    @operations = @operations.where("#{@filter[:type]} = ?", @filter[:text])
-                elsif @filter[:type] == 'kind'
-                    category = Category.find_by(name: @filter[:text])
-                    @operations = category.operations.where(company_id: @company_id, task_id: @task_id) if category
-                end
+                @operations = @operations.operations_filter(@filter)
             end
         end
     end

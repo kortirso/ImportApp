@@ -1,34 +1,37 @@
 .row
-    .col-xs-12
+    .col-xs-12.col-sm-6.col-lg-4
         #new_task_block
             h3 Create new task
             = simple_form_for Task.new, remote: true do |f|
-                .col-xs-12.col-lg-6= f.file_field :file, label: 'File'
-                .col-xs-12
-                    .actions
-                        = f.button :submit, class: 'btn btn-sm btn-primary', value: 'Load file'
+                .row
+                    .col-xs-12.col-lg-6= f.file_field :file, label: 'File'
+                    .col-xs-12
+                        .actions
+                            = f.button :submit, class: 'btn btn-sm btn-primary', value: 'Load file'
 .row
     .col-xs-12
-        h3 List of tasks
-        - @tasks.each do |task|
-            .col-xs-3
-                .task-block id="task_#{task.id}"
-                    p= "ID - #{task.id}"
-                    p= "File - #{task.file.url.split('/').last}"
-                    p.progress
-                        - if task.success == 0
-                            = 'Loading...'
-                        - else
-                            = 'Loading complete'
-                    p
-                        = "Loaded - "
-                        span.loaded= task.success + task.failure
-                    p
-                        = "Successed loades - "
-                        span.success= task.success
-                    p
-                        = "Failed loades - "
-                        span.failed= task.failure
-                    p= link_to 'View results', task_path(task), class: 'btn btn-sm btn-primary'
+        #tasks
+            h3 List of tasks
+            .row
+                - @tasks.each do |task|
+                    .col-xs-12.col-sm-6.col-md-4.col-lg-4
+                        .task-block id="task_#{task.id}"
+                            p= "ID - #{task.id}"
+                            p= "File - #{task.file.url.split('/').last}"
+                            p.progress
+                                - if task.parsed?
+                                    = 'Loading complete'
+                                - else
+                                    = 'Loading...'
+                            p
+                                = "Loaded - "
+                                span.loaded= task.success + task.failure
+                            p
+                                = "Successed loads - "
+                                span.success= task.success
+                            p
+                                = "Failed loads - "
+                                span.failed= task.failure
+                            p= link_to 'View results', task_path(task), class: 'btn btn-sm btn-primary'
 = subscribe_to "/tasks"
 = subscribe_to "/tasks/complete"

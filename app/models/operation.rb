@@ -13,14 +13,21 @@ class Operation < ActiveRecord::Base
     scope :of_company, -> (company_id) { where(company_id: company_id) }
     scope :accepted, -> { where(status: 'accepted') }
 
-    #after_create :send_message
-
     def self.highest
         all.order(amount: :desc).first.invoice_num
     end
 
-    private
-    def send_message
-        PrivatePub.publish_to "/tasks/#{self.task_id}", operation: OperationSerializer.new(self).serializable_hash.to_json
+    def self.operations_filter(filter)
+        operations = all
+        company_id, task_id = operations.first.company_id, operations.first.task_id
+        if filter && filter[:type] && filter[:text] && !filter[:text].empty?
+            if %w(status invoice_num reporter).include?(filter[:type])
+                operations = operations.where("#{filter[:type]} = ?", filter[:text])
+            elsif filter[:type] == 'kind'
+                category = Category.find_by(name: filter[:text])
+                operations = category.operations.where(company_id: company_id, task_id: task_id) if category
+            end
+        end
+        operations
     end
 end
