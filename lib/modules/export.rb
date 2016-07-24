@@ -24,7 +24,7 @@ module Export
             company = Company.find_by(id: @company_id)
             if company
                 @operations = company.operations.of_task(@task_id)
-                @operations = @operations.operations_filter(@filter)
+                @operations = @operations.operations_filter(@filter ,@company_id, @task_id)
             end
         end
     end

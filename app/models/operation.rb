@@ -17,9 +17,8 @@ class Operation < ActiveRecord::Base
         all.order(amount: :desc).first.invoice_num
     end
 
-    def self.operations_filter(filter)
+    def self.operations_filter(filter, company_id, task_id)
         operations = all
-        company_id, task_id = operations.first.company_id, operations.first.task_id
         if filter && filter[:type] && filter[:text] && !filter[:text].empty?
             if %w(status invoice_num reporter).include?(filter[:type])
                 operations = operations.where("#{filter[:type]} = ?", filter[:text])

@@ -32,35 +32,35 @@ RSpec.describe Operation, type: :model do
         let!(:task) { create :task }
         let!(:category) { create :category, name: 'delegation' }
         let!(:operation_1) { create :operation, company: company, task: task }
-        let!(:operation_2) { create :operation, amount: 20000.0, company: company, task: task, kind: 'delegation' }
-        let!(:operation_3) { create :operation, amount: 20000.0, company: company, task: task, status: 'accepted' }
+        let!(:operation_2) { create :operation, company: company, task: task, kind: 'delegation' }
+        let!(:operation_3) { create :operation, company: company, task: task, status: 'accepted' }
         let!(:link) { create :link, operation: operation_2, category: category }
 
         context 'return all operations if' do
             it 'no filter' do
-                expect(Operation.operations_filter(nil).size).to eq 3
+                expect(Operation.operations_filter(nil, company.id, task.id).size).to eq 3
             end
 
             it 'filter[:type] is nil' do
-                expect(Operation.operations_filter({ text: 'other' }).size).to eq 3
+                expect(Operation.operations_filter({ text: 'other' }, company.id, task.id).size).to eq 3
             end
 
             it 'filter[:text] is nil' do
-                expect(Operation.operations_filter({ type: 'status' }).size).to eq 3
+                expect(Operation.operations_filter({ type: 'status' }, company.id, task.id).size).to eq 3
             end
 
             it 'filter[:text] is empty' do
-                expect(Operation.operations_filter({ type: 'status', text: '' }).size).to eq 3
+                expect(Operation.operations_filter({ type: 'status', text: '' }, company.id, task.id).size).to eq 3
             end
         end
 
         context 'if filter is correct' do
             it 'returns operation with spesific kind' do
-                expect(Operation.operations_filter({ type: 'kind', text: 'delegation' })).to eq [operation_2]
+                expect(Operation.operations_filter({ type: 'kind', text: 'delegation' }, company.id, task.id)).to eq [operation_2]
             end
 
             it 'returns operation with spesific status' do
-                expect(Operation.operations_filter({ type: 'status', text: 'accepted' })).to eq [operation_3]
+                expect(Operation.operations_filter({ type: 'status', text: 'accepted' }, company.id, task.id)).to eq [operation_3]
             end
         end
     end
