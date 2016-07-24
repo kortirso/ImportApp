@@ -1,12 +1,23 @@
 # Requirements
 
 * PostgreSQL
+* Sidekiq
+* Redis
 
 # Setup
 
-1. `cp config/database.yml.example config/database.yml`
+1. `cp config/application.yml.example config/application.yml`
+* `fill database username and password`
 * `bundle`
 * `bundle exec rake db:setup`
+
+# Run
+
+1. `rails s`
+* `bundle exec rackup private_pub.ru -s thin -E production`
+* `redis-server`
+* `sidekiq`
+* OR [visit](http://46.101.217.59:3009/)
 
 # Assignments
 
